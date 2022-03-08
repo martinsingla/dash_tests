@@ -17,7 +17,7 @@ import numpy as np
 import datetime as dt
 import tabula
 import pymongo
-from credentials import mongodb_user, mongodb_password, mongodb_cluster, mongodb_database
+#from credentials import mongodb_user, mongodb_password, mongodb_cluster, mongodb_database
 
 def scrap_last_ANPACT_records():
     
