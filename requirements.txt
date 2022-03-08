@@ -34,6 +34,7 @@ Flask==2.0.3
 Flask-Compress==1.11
 fonttools==4.25.0
 greenlet @ file:///C:/ci/greenlet_1628888275363/work
+gunicorn==20.1.0
 hijri-converter @ file:///home/conda/feedstock_root/build_artifacts/hijri-converter_1644680066407/work
 holidays @ file:///home/conda/feedstock_root/build_artifacts/holidays_1641326159059/work
 idna @ file:///tmp/build/80754af9/idna_1637925883363/work
