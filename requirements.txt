@@ -18,6 +18,7 @@ numexpr
 numpy
 packaging
 pandas
+pymongo
 plotly==5.6.0
 pyparsing
 python-dateutil
