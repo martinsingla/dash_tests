@@ -10,7 +10,7 @@ from anpact_scrapper import get_ANPACTdb_full_data
 import warnings
 warnings.filterwarnings("ignore")
 
-===========================================================================
+#===========================================================================
 app = Dash(__name__)
 
 #GET HISTORIC DATA FROM MONGODB
@@ -37,15 +37,15 @@ fcst= fcst[fcst['year']>= 2022].reset_index(drop=True)
 
 ##UNIFY FORECASTS & HISTORIC
 dat = pd.concat([hist, fcst])
-
-dat= pd.merge(dat, new_dat, on= ['year', 'quarter', 'month'], how='left')
-for seg in ['truck4_5_ANPACT', 'truck6', 'truck7', 'truck8', 'truckTractor']:
-    dat.loc[(dat['year'] == 2021) & (dat['month'] == 12), 'nd_'+seg] = dat.loc[(dat['year'] == 2021) & (dat['month'] == 12), seg]
     
 for i in new_dat.columns[3:]:
     new_dat= new_dat.rename(columns= {i: 'nd_'+i})
 
-===========================================================================
+dat= pd.merge(dat, new_dat, on= ['year', 'quarter', 'month'], how='left')
+for seg in ['truck4_5_ANPACT', 'truck6', 'truck7', 'truck8', 'truckTractor']:
+    dat.loc[(dat['year'] == 2021) & (dat['month'] == 12), 'nd_'+seg] = dat.loc[(dat['year'] == 2021) & (dat['month'] == 12), seg]
+
+#===========================================================================
 colors= {
     'truck4_5_ANPACT': '#EF553B',
     'truck6': '#00CC96',
@@ -66,7 +66,7 @@ colors= {
     'nd_truckTractor': '#19D3F3'
 }
 
-===========================================================================
+#===========================================================================
 ##App Layoyt
 
 app.layout = html.Div([
@@ -133,7 +133,7 @@ app.layout = html.Div([
              })
 ])
 
-===========================================================================
+#===========================================================================
 
 @app.callback(
     Output('ts-chart', 'figure'),
@@ -207,7 +207,7 @@ def update_graph(periodicity, segments, years):
 
     return fig
     
-===========================================================================
+#===========================================================================
 
 if __name__ == '__main__':
     app.run_server(debug=False, use_reloader=False)
