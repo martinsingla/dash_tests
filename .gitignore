@@ -1,3 +1,8 @@
+credentials.py
+00.0_dash_tests.ipynb
+00.1_send_forecasts_to_mongodb.ipynb
+01_dash_app_mongodb.ipynb
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
