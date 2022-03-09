@@ -18,6 +18,7 @@ import datetime as dt
 import tabula
 import pymongo
 #from credentials import mongodb_user, mongodb_password, mongodb_cluster, mongodb_database
+import os
 
 def scrap_last_ANPACT_records():
     
@@ -52,6 +53,11 @@ def scrap_last_ANPACT_records():
     return menudeo
 
 def update_ANPACTdb_last_records():
+
+    mongodb_user = os.environ.get("mongodb_user")
+    mongodb_password = os.environ.get("mongodb_password")
+    mongodb_cluster = os.environ.get("mongodb_cluster")
+    mongodb_database = os.environ.get("mongodb_database")
     
     #Set connection with MongoDB
     conn = f'mongodb+srv://{mongodb_user}:{mongodb_password}@{mongodb_cluster}.qf8nk.mongodb.net/{mongodb_database}?retryWrites=true&w=majority'
