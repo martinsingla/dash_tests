@@ -12,6 +12,7 @@ warnings.filterwarnings("ignore")
 
 #===========================================================================
 app = Dash(__name__)
+server = app.server 
 
 #GET HISTORIC DATA FROM MONGODB
 dat= get_ANPACTdb_full_data()
