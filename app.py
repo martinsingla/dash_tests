@@ -26,10 +26,7 @@ dat= dat[['year', 'quarter', 'month', 'truck4_5_ANPACT', 'truck6', 'truck7', 'tr
 hist= dat[dat['year'] < 2022]
 new_dat= dat[dat['year']>= 2022].reset_index(drop=True)
 
-#GET FORECASTS FROM MONGODB
-#fcst= NEW_FUNCTION_TO_DEFINE()  #####<<<<------- HAY QUE TERMINAR FCSTS DE BUSES ANTES!!!!
-
-##PROVISIONAL
+#GET FORECASTED VALUES
 fcst= get_forecastsdb()
 fcst['year'] = pd.to_datetime(fcst['date']).dt.year
 fcst['quarter'] = pd.to_datetime(fcst['date']).dt.quarter
