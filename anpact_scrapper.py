@@ -17,7 +17,6 @@ import numpy as np
 import datetime as dt
 import tabula
 import pymongo
-#from credentials import mongodb_user, mongodb_password, mongodb_cluster, mongodb_database
 import os
 
 def scrap_last_ANPACT_records():
@@ -54,10 +53,10 @@ def scrap_last_ANPACT_records():
 
 def update_ANPACTdb_last_records():
 
-    mongodb_user = os.environ.get("mongodb_user")
+    mongodb_user = "martinsingla"
     mongodb_password = os.environ.get("mongodb_password")
-    mongodb_cluster = os.environ.get("mongodb_cluster")
-    mongodb_database = os.environ.get("mongodb_database")
+    mongodb_cluster = "cluster0"
+    mongodb_database = "mexican_truckDB"
     
     #Set connection with MongoDB
     conn = f'mongodb+srv://{mongodb_user}:{mongodb_password}@{mongodb_cluster}.qf8nk.mongodb.net/{mongodb_database}?retryWrites=true&w=majority'
@@ -103,6 +102,11 @@ def update_ANPACTdb_last_records():
     return print('----')
 
 def get_ANPACTdb_full_data():
+
+    mongodb_user = "martinsingla"
+    mongodb_password = os.environ.get("mongodb_password")
+    mongodb_cluster = "cluster0"
+    mongodb_database = "mexican_truckDB"
     
     #Set connection with MongoDB
     conn = f'mongodb+srv://{mongodb_user}:{mongodb_password}@{mongodb_cluster}.qf8nk.mongodb.net/{mongodb_database}?retryWrites=true&w=majority'
