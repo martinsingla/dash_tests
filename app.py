@@ -90,7 +90,7 @@ app.layout = html.Div([
             [{'label':'Yearly', 'value': 'year'}, 
              {'label':'Quarterly', 'value': 'quarter'}, 
              {'label':'Monthly', 'value': 'month'}],
-            value= 'year',
+            value= 'month',
             id='periodicity')
         ]),
         html.Div([
@@ -114,7 +114,7 @@ app.layout = html.Div([
             max= dat['year'].max(),
             step=1,
             marks= {i:i if i%2==0 else '' for i in range(2008, 2033)},
-            value= [2015, 2025],
+            value= [2020, 2022],
             id='years')
         ]),
     ], style={'width': '30%', 
