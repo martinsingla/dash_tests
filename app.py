@@ -5,7 +5,7 @@ import plotly.express as px
 import pandas as pd
 import numpy as np
 
-from anpact_scrapper import get_ANPACTdb_full_data
+from anpact_scrapper import get_ANPACTdb_full_data, get_forecastsdb
 
 import warnings
 warnings.filterwarnings("ignore")
@@ -30,8 +30,10 @@ new_dat= dat[dat['year']>= 2022].reset_index(drop=True)
 #fcst= NEW_FUNCTION_TO_DEFINE()  #####<<<<------- HAY QUE TERMINAR FCSTS DE BUSES ANTES!!!!
 
 ##PROVISIONAL
-fcst= pd.read_csv('../00_Navistar/02_processed/02_finales/01_monthly_truck_forecasts_2008-2032 (v20220223).csv')
-fcst['quarter'] = pd.to_datetime([str(fcst['year'][i])+'-'+str(fcst['month'][i]) for i in range(0, len(fcst))]).quarter
+fcst= get_forecastsdb()
+fcst['year'] = pd.to_datetime(fcst['date']).dt.year
+fcst['quarter'] = pd.to_datetime(fcst['date']).dt.quarter
+fcst['month'] = pd.to_datetime(fcst['date']).dt.month
 fcst= fcst[['year', 'quarter', 'month', 'truck4_5_ANPACT', 'truck6', 'truck7', 'truck8', 'truckTractor']]
 fcst= fcst[fcst['year']>= 2022].reset_index(drop=True)
 

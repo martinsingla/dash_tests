@@ -130,3 +130,28 @@ def get_ANPACTdb_full_data():
     client.close()
     
     return data
+
+def get_forecastsdb():
+    
+    mongodb_password = os.environ.get("mongodb_password")
+    
+    #Set connection with MongoDB
+    conn = f'mongodb+srv://martinsingla:{mongodb_password}@cluster0.qf8nk.mongodb.net/mexican_truckDB?retryWrites=true&w=majority'
+    client = pymongo.MongoClient(conn)
+    db = client.mexican_truckDB
+
+    #get records from database
+    records= db.forecasts.find()
+    records= list(records)
+    #cnovert and format in pandas dataframe
+    records_dic={}
+    for i in range(0, len(records)):
+        record= records[i]['forecasts']
+        record['date'] = records[i]['date']
+        records_dic[i] = record
+    data= pd.DataFrame.from_dict(records_dic, orient= 'index')
+    data= data[np.append(['date'], data.columns[:-1])]
+
+    client.close()
+    
+    return data
