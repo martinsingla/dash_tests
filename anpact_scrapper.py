@@ -10,6 +10,10 @@
 # get_ANPACTdb_full_data()
 # Param: None
 # Output: Full dataset w/ historic CV sales data
+
+# get_forecastsdb()
+#Param: none
+#Output: full forecasts dataset
 ##############################################################
 
 import pandas as pd
@@ -102,6 +106,8 @@ def update_ANPACTdb_last_records():
     return print('----')
 
 def get_ANPACTdb_full_data():
+    
+    update_ANPACTdb_last_records()
 
     mongodb_user = "martinsingla"
     mongodb_password = os.environ.get("mongodb_password")
