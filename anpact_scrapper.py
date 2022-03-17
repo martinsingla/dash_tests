@@ -21,13 +21,30 @@ import numpy as np
 import datetime as dt
 import tabula
 import pymongo
+import dropbox
 import os
+import requests
 
 def scrap_last_ANPACT_records():
     
-    url= 'https://www.anpact.com.mx/documentos/anpact/BOLETIN-ESTADISTICO-ANPACT.pdf' 
-    dfs= tabula.read_pdf(url, pages='1')
+    #Set connection to Dropbox
+    DBX_ACCESS_TOKEN= os.environ.get("DBX_ACCESS_TOKEN")    
+    dbx = dropbox.Dropbox(DBX_ACCESS_TOKEN)
     
+    #Get last ANPACT report PDF
+    anpact_url = 'https://www.anpact.com.mx/documentos/anpact/BOLETIN-ESTADISTICO-ANPACT.pdf'
+    response = requests.get(anpact_url)
+
+    #Store last ANPACT report on DropBox
+    dbx.files_upload(response.content, '/ANPACT_REPORTS/REPORT.pdf')
+
+    #Get DropBox URL of the last report
+    filePath= '/ANPACT_REPORTS/REPORT.pdf'
+    dropbox_url= dbx.files_get_temporary_link(filePath).link
+
+    #Read tables in last ANPACT report
+    dfs= tabula.read_pdf(dropbox_url, pages='1')
+
     #Identificar Año del último reporte publicado
     y= dfs[0].iloc[0,0]
     #Identificar Mes del año del último reporte publicado
@@ -36,18 +53,18 @@ def scrap_last_ANPACT_records():
     m= meses[list(meses.keys())[[mes in dfs[0].columns[0] for mes in list(meses.keys())].index(True)]]
     #Fecha del ultimo reporte
     fecha= pd.to_datetime(str(y) + '-' + str(m))
-    
+
     clases_camiones = ['Fecha', 'truck4_5_ANPACT', 'truck6', 'truck7', 'truck8', 'truckTractor']
     ventas_camiones_mes_año_actual = np.append([fecha, 
                                                 dfs[2].iloc[13:15, 0].astype(int).sum()], #suma de clase 4 y 5
                                                dfs[2].iloc[15:19, 0]) #otras clases
     menudeo_camiones= pd.DataFrame(np.array([ventas_camiones_mes_año_actual]), columns= clases_camiones)
-    
+
     #Datos buses menudeo
     clases_buses = ['Fecha', 'bus5_6', 'bus7', 'bus8', 'busLongDist']
     ventas_buses_mes_año_actual = np.append([fecha], dfs[2].iloc[23:27, 0])
     menudeo_buses= pd.DataFrame(np.array([ventas_buses_mes_año_actual]), columns= clases_buses)
-    
+
     #Datos camiones y buses
     menudeo = pd.merge(menudeo_camiones, menudeo_buses, on= 'Fecha')
     for col in menudeo.columns[1:]:
@@ -57,13 +74,10 @@ def scrap_last_ANPACT_records():
 
 def update_ANPACTdb_last_records():
 
-    mongodb_user = "martinsingla"
     mongodb_password = os.environ.get("mongodb_password")
-    mongodb_cluster = "cluster0"
-    mongodb_database = "mexican_truckDB"
     
     #Set connection with MongoDB
-    conn = f'mongodb+srv://{mongodb_user}:{mongodb_password}@{mongodb_cluster}.qf8nk.mongodb.net/{mongodb_database}?retryWrites=true&w=majority'
+    conn = f'mongodb+srv://martinsingla:{mongodb_password}@cluster0.qf8nk.mongodb.net/mexican_truckDB?retryWrites=true&w=majority'
     client = pymongo.MongoClient(conn)
     db = client.mexican_truckDB
     

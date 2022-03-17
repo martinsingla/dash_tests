@@ -3,6 +3,8 @@ credentials.py
 00.1_send_forecasts_to_mongodb.ipynb
 00.2 get_forecasts_from_mongodb.ipynb
 01_dash_app_mongodb.ipynb
+00.3_scrap_ANPACT_in_cloud.ipynb
+BOLETIN-ESTADISTICO-ANPACT.pdf
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
