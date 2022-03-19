@@ -28,8 +28,10 @@ import requests
 def scrap_last_ANPACT_records():
     
     #Set connection to Dropbox
-    DBX_ACCESS_TOKEN= os.environ.get("DBX_ACCESS_TOKEN")    
-    dbx = dropbox.Dropbox(DBX_ACCESS_TOKEN)
+    DBX_APP_KEY= os.environ.get("DBX_APP_KEY")
+    DBX_REFRESH_TOKEN= os.environ.get("DBX_REFRESH_TOKEN")   
+    
+    dbx = dropbox.Dropbox(oauth2_refresh_token= DBX_REFRESH_TOKEN, app_key=DBX_APP_KEY)
     
     #Get last ANPACT report PDF
     anpact_url = 'https://www.anpact.com.mx/documentos/anpact/BOLETIN-ESTADISTICO-ANPACT.pdf'
