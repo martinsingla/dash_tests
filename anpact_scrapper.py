@@ -24,6 +24,7 @@ import pymongo
 import dropbox
 import os
 import requests
+from datetime import date
 
 def scrap_last_ANPACT_records():
     
@@ -38,10 +39,11 @@ def scrap_last_ANPACT_records():
     response = requests.get(anpact_url)
 
     #Store last ANPACT report on DropBox
-    dbx.files_upload(response.content, '/ANPACT_REPORTS/REPORT.pdf')
+    timestamp= date.today().strftime("%Y%m")
+    dbx.files_upload(response.content, f'/ANPACT_REPORTS/REPORT{timestamp}.pdf')
 
     #Get DropBox URL of the last report
-    filePath= '/ANPACT_REPORTS/REPORT.pdf'
+    filePath= f'/ANPACT_REPORTS/REPORT{timestamp}.pdf'
     dropbox_url= dbx.files_get_temporary_link(filePath).link
 
     #Read tables in last ANPACT report
