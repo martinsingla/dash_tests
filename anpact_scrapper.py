@@ -96,7 +96,7 @@ def update_ANPACTdb_last_records():
     if last_record == new_record['Fecha'][0]:
         print('Most recent ANPACT data already recorded in database! :)')
 
-    elif last_record == new_record['Fecha'][0] - pd.DateOffset(month=1):
+    elif last_record.date() == (new_record['Fecha'][0] - pd.DateOffset(months= 1)).date():
         print('New ANPACT report published. Appending new data to database! :)')
 
         db.sales.insert_one({
