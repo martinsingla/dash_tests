@@ -30,7 +30,7 @@ def scrap_last_ANPACT_records():
     
     #Set connection to Dropbox
     DBX_APP_KEY= os.environ.get("DBX_APP_KEY")
-    DBX_REFRESH_TOKEN= os.environ.get("DBX_REFRESH_TOKEN")   
+    DBX_REFRESH_TOKEN= os.environ.get("DBX_REFRESH_TOKEN")
     
     dbx = dropbox.Dropbox(oauth2_refresh_token= DBX_REFRESH_TOKEN, app_key=DBX_APP_KEY)
     

@@ -29,9 +29,6 @@ dat= dat[['year', 'quarter', 'month',
 hist= dat[dat['year'] < 2022]
 new_dat= dat[dat['year']>= 2022].reset_index(drop=True)
 
-#GET FORECASTS FROM MONGODB
-#fcst= NEW_FUNCTION_TO_DEFINE()  #####<<<<------- HAY QUE TERMINAR FCSTS DE BUSES ANTES!!!!
-
 ##PROVISIONAL
 fcst= get_forecastsdb()
 fcst['year'] = pd.to_datetime(fcst['date']).dt.year
@@ -220,20 +217,50 @@ def update_graph(periodicity, classes, years):
                 fig.data[n]['line']['dash'] = 'dot'
 
     elif periodicity == 'quarter':
+        
         dff= dat[np.append(['year', 'quarter'], classes)]
-        dff= dff.loc[(dff['year'] >= years[0]) & (dff['year'] <= years[1]), :].reset_index(drop=True)
+
+        dff= dff.loc[(dff['year'] >= years[0]) & (dff['year'] <= years[1]), :].reset_index(drop=True)\
+        .groupby(['year', 'quarter'], as_index=False)[classes].sum()
+
         if years[1] >= 2022:
             for seg in classes:
-                dff['Forecast '+seg] = np.append(np.repeat(np.nan, len(dff.loc[(dff['year'] >= years[0]) & (dff['year'] < 2021), seg])),
-                                                 dff.loc[(dff['year'] >= 2021) & (dff['year'] <= years[1]), seg])
-        dff['yq'] = pd.PeriodIndex([str(dff['year'][i])+'-Q'+str(dff['quarter'][i]) for i in range(0, len(dff))], freq='Q').to_timestamp()
-        dff= dff.groupby('yq', as_index=False)[dff.columns[2:]].sum()
-        dff.loc[(dff['yq'].dt.year < 2021) | ((dff['yq'].dt.year == 2021) & (dff['yq'].dt.quarter < 4)), ['Forecast '+seg for seg in classes]] = np.nan
-        dff.loc[dff['yq'].dt.year >= 2022, classes] = np.nan
+                dff['Forecast '+seg] = np.append(np.repeat(np.nan, 
+                                                           len(dff.loc[(dff['year'] >= years[0]) & 
+                                                                       (dff['year'] <= 2021), seg]) -1),
+                                                 dff.loc[((dff['year'] >= 2022) | 
+                                                          ((dff['year'] == 2021) & (dff['quarter'] == 4))) & 
+                                                         (dff['year'] <= years[1]), seg])
+
+        dff['yq'] = pd.PeriodIndex([str(dff['year'][i])+'-Q'+str(dff['quarter'][i]) for i in range(0, len(dff))],
+                                  freq='Q').to_timestamp()
+
+        dff.loc[dff['year'] >= 2022, classes] = np.nan
+
+        dff= dff.drop(columns=['year', 'quarter'])
+        dff= dff[np.append(['yq'], dff.columns[:-1])]
+
+        nd= dat[np.append(['year', 'quarter'], ['nd_'+seg for seg in classes])]
+        nd= nd.loc[(nd['year'] >= years[0]) & (nd['year'] <= years[1]), :].reset_index(drop=True)\
+        .groupby(['year', 'quarter'], as_index=False)[['nd_'+seg for seg in classes]].sum()
+        nd['yq'] = pd.PeriodIndex([str(nd['year'][i])+'-Q'+str(nd['quarter'][i]) for i in range(0, len(nd))], freq='Q').to_timestamp()
+        nd= nd[np.append(['yq'], ['nd_'+seg for seg in classes])]#
+
+        for nds in ['nd_'+seg for seg in classes]:
+            nd.loc[nd[nds] == 0, nds] = np.nan
+
+        dff = pd.merge(dff, nd, on = ['yq'])
+        for s in classes:
+            nds= 'nd_'+s
+            dff.loc[(dff['yq'].dt.year == 2021) & 
+                    (dff['yq'].dt.quarter== 4), nds] = dff.loc[(dff['yq'].dt.year == 2021) & 
+                                                               (dff['yq'].dt.quarter== 4), s]
+
         fig= px.line(dff, x= 'yq', y= dff.columns[1:], markers= True,
-                    color_discrete_sequence = [colors[col] for col in dff.columns[1:]])
+                     color_discrete_sequence = [colors[col] for col in dff.columns[1:]])
+
         if years[1] >= 2022:
-            for n in range(int(len(fig.data)/2), len(fig.data)):
+            for n in range(int(len(fig.data)/3), len(fig.data)):
                 fig.data[n]['line']['dash'] = 'dot'
 
     elif periodicity == 'month':
