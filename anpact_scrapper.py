@@ -90,35 +90,53 @@ def update_ANPACTdb_last_records():
 
     #Get last data point from the databse
     last_record = db.sales.find_one(sort=[( '_id', pymongo.DESCENDING )])
-    last_record = pd.to_datetime(last_record['date'])
 
-    #Check if there is new data to be appended to database
-    if last_record == new_record['Fecha'][0]:
-        print('Most recent ANPACT data already recorded in database! :)')
-
-    elif last_record.date() == (new_record['Fecha'][0] - pd.DateOffset(months= 1)).date():
-        print('New ANPACT report published. Appending new data to database! :)')
-
+    if last_record is None:
+        print('No records in db collection. Adding first record...')
         db.sales.insert_one({
-            'date': new_record['Fecha'][0],
-            'sales': {
-                'truck4_5_ANPACT': new_record['truck4_5_ANPACT'][0],
-                'truck6': new_record['truck6'][0],
-                'truck7': new_record['truck7'][0],
-                'truck8': new_record['truck8'][0],
-                'truckTractor': new_record['truckTractor'][0],
-                'bus5_6': new_record['bus5_6'][0],
-                'bus7': new_record['bus7'][0],
-                'bus8': new_record['bus8'][0],
-                'busLongDist': new_record['busLongDist'][0]
-            },
-            'date_added' : str(dt.datetime.now()).replace('-', '').replace(' ', '').replace(':', '')[:-7]
-            })    
+                'date': new_record['Fecha'][0],
+                'sales': {
+                    'truck4_5_ANPACT': new_record['truck4_5_ANPACT'][0],
+                    'truck6': new_record['truck6'][0],
+                    'truck7': new_record['truck7'][0],
+                    'truck8': new_record['truck8'][0],
+                    'truckTractor': new_record['truckTractor'][0],
+                    'bus5_6': new_record['bus5_6'][0],
+                    'bus7': new_record['bus7'][0],
+                    'bus8': new_record['bus8'][0],
+                    'busLongDist': new_record['busLongDist'][0]
+                },
+                'date_added' : str(dt.datetime.now()).replace('-', '').replace(' ', '').replace(':', '')[:-7]
+                })
 
-    elif last_record != new_record['Fecha'][0] - pd.DateOffset(month=1):
-        print('New ANPACT report published, but last record does not match new record.')
-        print('You may have skipped scrapping last month´s report... :O')
-        
+    else:
+
+        last_record = pd.to_datetime(last_record['date'])
+
+        #Check if there is new data to be appended to database
+        if last_record == new_record['Fecha'][0]:
+            print('Most recent ANPACT data already recorded in database! :)')
+        elif last_record.date() == (new_record['Fecha'][0] - pd.DateOffset(months= 1)).date():
+            print('New ANPACT report published. Appending new data to database! :)')
+            db.sales.insert_one({
+                'date': new_record['Fecha'][0],
+                'sales': {
+                    'truck4_5_ANPACT': new_record['truck4_5_ANPACT'][0],
+                    'truck6': new_record['truck6'][0],
+                    'truck7': new_record['truck7'][0],
+                    'truck8': new_record['truck8'][0],
+                    'truckTractor': new_record['truckTractor'][0],
+                    'bus5_6': new_record['bus5_6'][0],
+                    'bus7': new_record['bus7'][0],
+                    'bus8': new_record['bus8'][0],
+                    'busLongDist': new_record['busLongDist'][0]
+                },
+                'date_added' : str(dt.datetime.now()).replace('-', '').replace(' ', '').replace(':', '')[:-7]
+                })    
+        elif last_record != new_record['Fecha'][0] - pd.DateOffset(month=1):
+            print('New ANPACT report published, but last record does not match new record.')
+            print('You may have skipped scrapping last month´s report... :O')
+
     client.close()
     
     return print('----')
