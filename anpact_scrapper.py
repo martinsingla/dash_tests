@@ -29,10 +29,8 @@ from datetime import date
 def scrap_last_ANPACT_records():
     
     #Set connection to Dropbox
-    #DBX_APP_KEY= os.environ.get("DBX_APP_KEY")
-    #DBX_REFRESH_TOKEN= os.environ.get("DBX_REFRESH_TOKEN")
-    DBX_APP_KEY= 'thlvigjs1330ab8'
-    DBX_REFRESH_TOKEN= "D5In0ymEO1YAAAAAAAAAAehe9tllSABeIhQ6ram1f_bFjPudIirKNCFcSADFQzor"
+    DBX_APP_KEY= os.environ.get("DBX_APP_KEY")
+    DBX_REFRESH_TOKEN= os.environ.get("DBX_REFRESH_TOKEN")
     
     dbx = dropbox.Dropbox(oauth2_refresh_token= DBX_REFRESH_TOKEN, app_key=DBX_APP_KEY)
     
